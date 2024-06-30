@@ -39,7 +39,7 @@ const SmileCenterCard: React.FC<SmileCenterCardProps> = ({ center }) => {
           boxShadow: "0 4px 8px rgba(0, 0, 255, 0.2)",
           alignItems: "center",
         }}
-        onClick={handleOpenModal} // Abrir modal al hacer clic en el card
+        onClick={handleOpenModal}
       >
         <CardMedia
           component="img"

@@ -11,7 +11,7 @@ const SmileCenterList: React.FC = () => {
   const [filters, setFilters] = useState({
     zone: "",
     services: "",
-    appointmentType: "", // Ensure appointmentType is initialized as string
+    appointmentType: "",
     centerType: "",
   });
 
@@ -35,7 +35,6 @@ const SmileCenterList: React.FC = () => {
     appointmentType?: string;
     centerType: string;
   }) => {
-    // Ensure appointmentType is always a string
     const updatedFilters = {
       ...newFilters,
       appointmentType: newFilters.appointmentType || "",
@@ -83,10 +82,11 @@ const SmileCenterList: React.FC = () => {
       <Filters
         zone={filters.zone}
         services={filters.services}
-        appointmentType={filters.appointmentType} // Pass appointmentType as optional
+        appointmentType={filters.appointmentType}
         centerType={filters.centerType}
         onFilterChange={handleFilterChange}
         smileCenters={centers}
+        key="filters"
       />
 
       <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
@@ -100,9 +100,9 @@ const SmileCenterList: React.FC = () => {
       </Paper>
 
       <Grid container spacing={2}>
-        {filteredCenters.map((center) => (
+        {filteredCenters.map((center, index) => (
           <Grid item key={center.Place_Id} xs={12} sm={6} md={4}>
-            <SmileCenterCard center={center} />
+            <SmileCenterCard center={center} key={index} />
           </Grid>
         ))}
       </Grid>

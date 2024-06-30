@@ -17,13 +17,13 @@ import { Zone } from "../interfaces/enums";
 interface FiltersProps {
   zone: string;
   services: string;
-  appointmentType?: string; // Make appointmentType optional
-  centerType?: string; // Make centerType optional
+  appointmentType?: string;
+  centerType?: string;
   onFilterChange: (filters: {
     zone: string;
     services: string;
-    appointmentType: string; // Ensure appointmentType is always a string
-    centerType: string; // Ensure centerType is always a string
+    appointmentType: string;
+    centerType: string;
   }) => void;
   smileCenters: SmileCenter[];
 }
@@ -47,7 +47,6 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   useEffect(() => {
-    // Fetch available services from smileCenters
     const servicesSet = new Set<string>();
     smileCenters.forEach((center) => {
       Object.keys(center.Services).forEach((service) => {
@@ -58,7 +57,6 @@ const Filters: React.FC<FiltersProps> = ({
   }, [smileCenters]);
 
   useEffect(() => {
-    // Fetch available appointment types from smileCenters based on selected service
     const appointmentTypesSet = new Set<string>();
     if (services) {
       smileCenters.forEach((center) => {
@@ -68,7 +66,6 @@ const Filters: React.FC<FiltersProps> = ({
       });
       setAvailableAppointmentTypes(Array.from(appointmentTypesSet));
     } else {
-      // If no service is selected, show default Appointment_Type_Id
       const appointmentTypeIdsSet = new Set<string>();
       smileCenters.forEach((center) => {
         appointmentTypeIdsSet.add(center.Appointment_Type_Id);
@@ -78,7 +75,6 @@ const Filters: React.FC<FiltersProps> = ({
   }, [services, smileCenters]);
 
   useEffect(() => {
-    // Fetch available center types from smileCenters
     const centerTypesSet = new Set<string>();
     smileCenters.forEach((center) => {
       centerTypesSet.add(center.Center_Type);
@@ -92,8 +88,8 @@ const Filters: React.FC<FiltersProps> = ({
       zone: name === "zone" ? (value as string) : zone,
       services: name === "services" ? (value as string) : services,
       appointmentType:
-        name === "appointmentType" ? (value as string) : appointmentType || "", // Ensure appointmentType is always a string
-      centerType: name === "centerType" ? (value as string) : centerType || "", // Ensure centerType is always a string
+        name === "appointmentType" ? (value as string) : appointmentType || "",
+      centerType: name === "centerType" ? (value as string) : centerType || "",
     });
   };
 
@@ -101,8 +97,8 @@ const Filters: React.FC<FiltersProps> = ({
     onFilterChange({
       zone: "",
       services: "",
-      appointmentType: "", // Ensure appointmentType is initialized as string
-      centerType: "", // Ensure centerType is initialized as string
+      appointmentType: "",
+      centerType: "",
     });
   };
 
@@ -127,7 +123,7 @@ const Filters: React.FC<FiltersProps> = ({
           <InputLabel>Zone</InputLabel>
           <Select
             value={zone}
-            onChange={handleFilterChange} // Correct the event type here
+            onChange={handleFilterChange}
             label="Zone"
             name="zone"
           >
@@ -146,7 +142,7 @@ const Filters: React.FC<FiltersProps> = ({
           <InputLabel>Services</InputLabel>
           <Select
             value={services}
-            onChange={handleFilterChange} // Correct the event type here
+            onChange={handleFilterChange}
             label="Services"
             name="services"
           >
@@ -165,7 +161,7 @@ const Filters: React.FC<FiltersProps> = ({
           <InputLabel>Appointment Type</InputLabel>
           <Select
             value={appointmentType || ""}
-            onChange={handleFilterChange} // Correct the event type here
+            onChange={handleFilterChange}
             label="Appointment Type"
             name="appointmentType"
           >
@@ -184,7 +180,7 @@ const Filters: React.FC<FiltersProps> = ({
           <InputLabel>Center Type</InputLabel>
           <Select
             value={centerType || ""}
-            onChange={handleFilterChange} // Correct the event type here
+            onChange={handleFilterChange}
             label="Center Type"
             name="centerType"
           >
