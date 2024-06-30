@@ -1,12 +1,5 @@
+import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Box,
-  Button,
-} from "@mui/material";
 import { SmileCenter } from "../interfaces/SmileCenter";
 import SmileCenterModal from "./SmileCenterModal";
 

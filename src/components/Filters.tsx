@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
-  Button,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { CenterType, Services, Zone } from "../interfaces/enums";
+import React, { useEffect, useState } from "react";
 import { SmileCenter } from "../interfaces/SmileCenter";
+import { Zone } from "../interfaces/enums";
 
 interface FiltersProps {
   zone: string;
   services: string;
   appointmentType?: string; // Make appointmentType optional
-  centerType: string;
+  centerType?: string; // Make centerType optional
   onFilterChange: (filters: {
     zone: string;
     services: string;
     appointmentType: string; // Ensure appointmentType is always a string
-    centerType: string;
+    centerType: string; // Ensure centerType is always a string
   }) => void;
   smileCenters: SmileCenter[];
 }
@@ -31,7 +31,7 @@ interface FiltersProps {
 const Filters: React.FC<FiltersProps> = ({
   zone,
   services,
-  appointmentType = "", // Ensure appointmentType is initialized as empty string
+  appointmentType,
   centerType,
   onFilterChange,
   smileCenters,
@@ -42,6 +42,9 @@ const Filters: React.FC<FiltersProps> = ({
   const [availableAppointmentTypes, setAvailableAppointmentTypes] = useState<
     string[]
   >([]);
+  const [availableCenterTypes, setAvailableCenterTypes] = useState<string[]>(
+    []
+  );
 
   useEffect(() => {
     // Fetch available services from smileCenters
@@ -57,21 +60,40 @@ const Filters: React.FC<FiltersProps> = ({
   useEffect(() => {
     // Fetch available appointment types from smileCenters based on selected service
     const appointmentTypesSet = new Set<string>();
-    smileCenters.forEach((center) => {
-      Object.values(center.Services).forEach((service) => {
-        appointmentTypesSet.add(service.AppointmentTypeId);
+    if (services) {
+      smileCenters.forEach((center) => {
+        if (center.Services[services]) {
+          appointmentTypesSet.add(center.Services[services].AppointmentTypeId);
+        }
       });
+      setAvailableAppointmentTypes(Array.from(appointmentTypesSet));
+    } else {
+      // If no service is selected, show default Appointment_Type_Id
+      const appointmentTypeIdsSet = new Set<string>();
+      smileCenters.forEach((center) => {
+        appointmentTypeIdsSet.add(center.Appointment_Type_Id);
+      });
+      setAvailableAppointmentTypes(Array.from(appointmentTypeIdsSet));
+    }
+  }, [services, smileCenters]);
+
+  useEffect(() => {
+    // Fetch available center types from smileCenters
+    const centerTypesSet = new Set<string>();
+    smileCenters.forEach((center) => {
+      centerTypesSet.add(center.Center_Type);
     });
-    setAvailableAppointmentTypes(Array.from(appointmentTypesSet));
+    setAvailableCenterTypes(Array.from(centerTypesSet));
   }, [smileCenters]);
 
   const handleFilterChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
     onFilterChange({
-      zone: name === "zone" ? value : zone,
-      services: name === "services" ? value : services,
-      appointmentType: name === "appointmentType" ? value : appointmentType,
-      centerType: name === "centerType" ? value : centerType,
+      zone: name === "zone" ? (value as string) : zone,
+      services: name === "services" ? (value as string) : services,
+      appointmentType:
+        name === "appointmentType" ? (value as string) : appointmentType || "", // Ensure appointmentType is always a string
+      centerType: name === "centerType" ? (value as string) : centerType || "", // Ensure centerType is always a string
     });
   };
 
@@ -79,8 +101,8 @@ const Filters: React.FC<FiltersProps> = ({
     onFilterChange({
       zone: "",
       services: "",
-      appointmentType: "",
-      centerType: "",
+      appointmentType: "", // Ensure appointmentType is initialized as string
+      centerType: "", // Ensure centerType is initialized as string
     });
   };
 
@@ -105,7 +127,7 @@ const Filters: React.FC<FiltersProps> = ({
           <InputLabel>Zone</InputLabel>
           <Select
             value={zone}
-            onChange={handleFilterChange}
+            onChange={handleFilterChange} // Correct the event type here
             label="Zone"
             name="zone"
           >
@@ -116,53 +138,44 @@ const Filters: React.FC<FiltersProps> = ({
             ))}
           </Select>
         </FormControl>
-
-        {availableServices.length > 0 && (
-          <FormControl
-            variant="outlined"
-            margin="normal"
-            sx={{ minWidth: isMobile ? "100%" : "30%" }}
+        <FormControl
+          variant="outlined"
+          margin="normal"
+          sx={{ minWidth: isMobile ? "100%" : "30%" }}
+        >
+          <InputLabel>Services</InputLabel>
+          <Select
+            value={services}
+            onChange={handleFilterChange} // Correct the event type here
+            label="Services"
+            name="services"
           >
-            <InputLabel>Services</InputLabel>
-            <Select
-              value={services}
-              onChange={handleFilterChange}
-              label="Services"
-              name="services"
-            >
-              <MenuItem value="">None</MenuItem>
-              {availableServices.map((service) => (
-                <MenuItem key={service} value={service}>
-                  {service}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-
-        {availableAppointmentTypes.length > 0 && (
-          <FormControl
-            variant="outlined"
-            margin="normal"
-            sx={{ minWidth: isMobile ? "100%" : "30%" }}
+            {availableServices.map((service) => (
+              <MenuItem key={service} value={service}>
+                {service}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          margin="normal"
+          sx={{ minWidth: isMobile ? "100%" : "30%" }}
+        >
+          <InputLabel>Appointment Type</InputLabel>
+          <Select
+            value={appointmentType || ""}
+            onChange={handleFilterChange} // Correct the event type here
+            label="Appointment Type"
+            name="appointmentType"
           >
-            <InputLabel>Appointment Type</InputLabel>
-            <Select
-              value={appointmentType}
-              onChange={handleFilterChange}
-              label="Appointment Type"
-              name="appointmentType"
-            >
-              <MenuItem value="">None</MenuItem>
-              {availableAppointmentTypes.map((appointmentType) => (
-                <MenuItem key={appointmentType} value={appointmentType}>
-                  {appointmentType}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-
+            {availableAppointmentTypes.map((appointmentType) => (
+              <MenuItem key={appointmentType} value={appointmentType}>
+                {appointmentType}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControl
           variant="outlined"
           margin="normal"
@@ -170,12 +183,12 @@ const Filters: React.FC<FiltersProps> = ({
         >
           <InputLabel>Center Type</InputLabel>
           <Select
-            value={centerType}
-            onChange={handleFilterChange}
+            value={centerType || ""}
+            onChange={handleFilterChange} // Correct the event type here
             label="Center Type"
             name="centerType"
           >
-            {Object.values(CenterType).map((type) => (
+            {availableCenterTypes.map((type) => (
               <MenuItem key={type} value={type}>
                 {type}
               </MenuItem>
@@ -183,7 +196,6 @@ const Filters: React.FC<FiltersProps> = ({
           </Select>
         </FormControl>
       </Box>
-
       <Box display="flex" justifyContent="end">
         <Button
           variant="outlined"
